@@ -19,4 +19,11 @@ class TaxiPark(models.Model):
         return self.address
 
 
+class Video(models.Model):
+    city = models.ForeignKey(City, related_name='video', on_delete=models.CASCADE)
+    video_url = models.URLField()
+
+    def __str__(self):
+        return self.city.name
+
 

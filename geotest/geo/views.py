@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import City, TaxiPark
+from .models import City, TaxiPark, Video
 from .serializers import CitySerializer, TaxiParkSerializer
 from geopy.distance import geodesic
 
@@ -50,11 +50,13 @@ class GetCityInfoByCoordinates(APIView):
 
             if nearest_city:
                 taxi_park = TaxiPark.objects.filter(city=nearest_city).first()
+                videos = Video.objects.filter(city=nearest_city)
 
                 city_info = {
                     'city_name': nearest_city.name,
                     'phone_number': nearest_city.phone_number,
-                    'taxi_park_address': taxi_park.address if taxi_park else 'Таксопарк не найден'
+                    'taxi_park_address': taxi_park.address if taxi_park else 'Таксопарк не найден',
+                    'videos': [video.video_url for video in videos]
                 }
 
                 return Response(city_info)
@@ -65,4 +67,8 @@ class GetCityInfoByCoordinates(APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class VideoList(APIView):
+    def get(self, request, city):
+        videos = Video.objects.filter(city=city)
+        return Response(videos)
 

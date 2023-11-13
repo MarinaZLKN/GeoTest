@@ -5,6 +5,7 @@ function Header (){
       const [latitude, setLatitude] = useState(null);
       const [longitude, setLongitude] = useState(null);
       const [cityInfo, setCityInfo] = useState(null);
+      const [videos, setVideos] = useState([]);
 
       useEffect(() => {
         if ('geolocation' in navigator) {
@@ -27,6 +28,10 @@ function Header (){
                 const data = await response.json();
                 console.log('Data', data)
                 setCityInfo(data);
+                if (data.videos) {
+                  setVideos(data.videos);
+                  console.log('Ссылки на видео:', data.videos);
+                }
               } else {
                 console.error('Ошибка при получении данных с сервера');
               }
@@ -38,6 +43,11 @@ function Header (){
           console.error("Geolocation API не поддерживается в вашем браузере.");
         }
       }, []);
+        // useEffect(() => {
+        //   if(cityInfo && cityInfo.videos) {
+        //     setVideos(cityInfo.videos);
+        //   }
+        // }, [cityInfo]);
 
       return (
         <div  className="header">
@@ -57,6 +67,22 @@ function Header (){
           ) : (
             <p>Определение геолокации...</p>
           )}
+          <div className="video">
+            {videos.map((videoUrl, index) => {
+              const videoId = videoUrl.split('/').pop().split('?')[0];
+              const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+
+              return (
+                <iframe
+                  src={embedUrl}
+                  key={index}
+                  title={`Video ${index}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              );
+            })}
+          </div>
 
         </div>
         );
