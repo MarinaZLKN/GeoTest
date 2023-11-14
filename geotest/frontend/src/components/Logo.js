@@ -1,5 +1,5 @@
 import React from 'react';
-import'../../styles/Header.css'
+import '../../styles/Header.css'
 import  pic from '../images/image 55.png'
 function Logo (){
 
